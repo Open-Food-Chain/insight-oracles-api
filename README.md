@@ -81,6 +81,29 @@ If you need to expose access to oracles komodod RPC methods such as oraclesample
 ### UI
 If you need to change symbol or default host/port edit ```insight-ui-komodo/public/js/config.js```
 
+### Komodod .conf example
+```
+rpcuser=user123
+rpcpassword=password123
+rpcport=58472
+server=1
+txindex=1
+addressindex=1
+timestampindex=1
+spentindex=1
+rpcworkqueue=256
+rpcbind=127.0.0.1
+rpcallowip=0.0.0.0/0
+zmqpubrawtx=tcp://127.0.0.1:11000
+zmqpubhashblock=tcp://127.0.0.1:11000
+uacomment=bitcore
+showmetrics=0
+```
+
+Make sure to check if zmq port is available on your machine.
+
+Komodod instance can be remote so it makes possible to run explorer and daemon as separate containers.
+
 ## License
 
 Code released under [the MIT license](https://github.com/bitpay/bitcore-node/blob/master/LICENSE).

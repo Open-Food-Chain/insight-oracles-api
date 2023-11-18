@@ -97,7 +97,6 @@ RUN nl=$'\n' && echo "\
 }$nl\
 " > ${COIN}-explorer/bitcore-node.json
 
-RUN ls -la deps/insight-ui-komodo
 RUN cp deps/bitcore-node-komodo/lib/services/bitcoind.js ${COIN}-explorer/node_modules/bitcore-node-komodo/lib/services
 RUN cp deps/bitcoind-rpc/lib/index.js ${COIN}-explorer/node_modules/bitcoind-rpc/lib
 RUN cp deps/insight-api-komodo/lib/index.js ${COIN}-explorer/node_modules/insight-api-komodo/lib
@@ -106,6 +105,5 @@ RUN cp -r deps/insight-ui-komodo ${COIN}-explorer/node_modules/
 
 # start explorer
 WORKDIR OCCS-explorer
-RUN ls -la
 CMD ["./node_modules/bitcore-node-komodo/bin/bitcore-node", "start"]
 EXPOSE 3001
