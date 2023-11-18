@@ -11,7 +11,7 @@ RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 
 # update the repository sources list
 # and install dependencies
-RUN apt-get update && apt-get install -y git curl autoclean libzmq3-dev make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget llvm libncurses5-dev libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev clang
+RUN apt-get update && apt-get install -y git curl libzmq3-dev make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget llvm libncurses5-dev libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev clang
 
 # use pyenv to install old python version 3.5 for node 8
 RUN git clone --depth=1 https://github.com/pyenv/pyenv.git .pyenv
@@ -44,18 +44,68 @@ RUN node -v
 RUN npm -v
 
 WORKDIR .
-COPY . .
 
-# remove line below
-RUN rm -rf OCCS-explorer/node_modules/zmq
+RUN git clone https://github.com/pbca26/insight-oracles-api
+WORKDIR insight-oracles-api
 
-RUN cd OCCS-explorer && npm install zmq@2.15.3 && cd ../
+RUN npm install git+https://git@github.com/pbca26/bitcore-node-komodo
 
-# run explorer deps install here
-# see install-explorer.sh for full list of commands to install deps
-# or do something like RUN ./install-explorer.sh in Docker container
+ARG COIN="OCCS"
+ARG rpchost="127.0.0.1"
+ARG rpcport="58472"
+ARG rpcuser="user246246276"
+ARG rpcpassword="passd6bb94637f105a0299e62089201b4087d3934f50366ad4834ef247e780d53417d8"
+ARG zmqport=11000
+ARG webport=3001
+
+RUN ./node_modules/bitcore-node-komodo/bin/bitcore-node create ${COIN}-explorer
+RUN cd ${COIN}-explorer && .././node_modules/bitcore-node-komodo/bin/bitcore-node install git+https://git@github.com/pbca26/insight-api-komodo git+https://git@github.com/pbca26/insight-ui-komodo
+RUN nl=$'\n' && echo "\
+{$nl\
+  \"network\": \"mainnet\",$nl\
+  \"port\": $webport,$nl\
+  \"services\": [$nl\
+    \"bitcoind\",$nl\
+    \"insight-api-komodo\",$nl\
+    \"insight-ui-komodo\",$nl\
+    \"web\"$nl\
+  ],$nl\
+  \"oracles\": {$nl\
+    \"passphroughMethods\": false,$nl\
+    \"updateInterval\": 300$nl\
+  },$nl\
+  \"servicesConfig\": {$nl\
+    \"bitcoind\": {$nl\
+      \"connect\": [$nl\
+        {$nl\
+          \"rpchost\": \"$rpchost\",$nl\
+          \"rpcport\": $rpcport,$nl\
+          \"rpcuser\": \"$rpcuser\",$nl\
+          \"rpcpassword\": \"$rpcpassword\",$nl\
+          \"zmqpubrawtx\": \"tcp://${rpchost}:${zmqport}\"$nl\
+        }$nl\
+      ]$nl\
+    },$nl\
+    \"insight-api-komodo\": {$nl\
+      \"rateLimiterOptions\": {$nl\
+        \"whitelist\": [\"::ffff:127.0.0.1\",\"127.0.0.1\"],$nl\
+        \"whitelistLimit\": 500000,$nl\
+        \"whitelistInterval\": 3600000$nl\
+      }$nl\
+    }$nl\
+  }$nl\
+}$nl\
+" > ${COIN}-explorer/bitcore-node.json
+
+RUN ls -la deps/insight-ui-komodo
+RUN cp deps/bitcore-node-komodo/lib/services/bitcoind.js ${COIN}-explorer/node_modules/bitcore-node-komodo/lib/services
+RUN cp deps/bitcoind-rpc/lib/index.js ${COIN}-explorer/node_modules/bitcoind-rpc/lib
+RUN cp deps/insight-api-komodo/lib/index.js ${COIN}-explorer/node_modules/insight-api-komodo/lib
+RUN cp deps/insight-api-komodo/lib/oracles.js ${COIN}-explorer/node_modules/insight-api-komodo/lib
+RUN cp -r deps/insight-ui-komodo ${COIN}-explorer/node_modules/
 
 # start explorer
 WORKDIR OCCS-explorer
+RUN ls -la
 CMD ["./node_modules/bitcore-node-komodo/bin/bitcore-node", "start"]
 EXPOSE 3001
