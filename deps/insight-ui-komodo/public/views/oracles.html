@@ -1,0 +1,44 @@
+<div data-ng-include src="'views/includes/connection.html'"></div>
+<section data-ng-controller="OraclesController" data-ng-init="init()">
+<section>    
+  <h1 translate>Oracles</h1>
+  <div class="text-muted" data-ng-if="!firstOracle">
+    <span translate>Loading Oracles Information</span>  <span class="loader-gif"></span>
+  </div>
+  <div data-ng-if="firstOracle">
+    <h3 translate>Summary</h3>
+    <div class="row">
+      <div class="col-md-12">
+        <table class="table" style="table-layout: fixed">
+          <tbody>
+            <tr>
+              <td><strong translate>First Industry Oracle</strong></td>
+              <td class="text-right text-muted">
+                <a href="/oracles/data/{{firstOracle.firstOracle.sample.o}}" title="{{firstOracle.firstOracle.sample.o}}">{{firstOracle.firstOracle.sample.o}}</a>
+              </td>
+            </tr>
+            <tr>
+              <td><strong translate>Industry Data Model</strong></td>
+              <td class="text-right text-muted">
+                <a href="/oracles/data/{{firstOracle.foundationSample[1].o}}" title="{{firstOracle.foundationSample[1].o}}">{{firstOracle.foundationSample[1].o}}</a>
+              </td>
+            </tr>
+            <tr>
+              <td><strong translate>Country Codes</strong></td>
+              <td class="text-right text-muted">
+                <a href="/oracles/data/{{firstOracle.foundationSample[2].o}}" title="{{firstOracle.foundationSample[2].o}}">{{firstOracle.foundationSample[2].o}}</a>
+              </td>
+            </tr>
+            <tr>
+              <td><strong translate>Industry Index</strong></td>
+              <td class="text-right text-muted">
+                <a href="/oracles/data/{{firstOracle.foundationSample[3].o}}" title="{{firstOracle.foundationSample[3].o}}">{{firstOracle.foundationSample[3].o}}</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div data-ng-include src="'views/oracle_data_table.html'"></div>
+</section>

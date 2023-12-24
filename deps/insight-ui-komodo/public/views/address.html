@@ -67,10 +67,13 @@
           <td class="small" translate>No. Transactions</td>
           <td class="address ellipsis text-right">{{address.unconfirmedTxApperances}}</td>
         </tr>
-
         </tbody>
       </table>
     </div>
+  </div>
+  <div data-ng-if="address.addrStr && addressOracles">
+    <h2 translate>Oracles</h2>
+    <div data-ng-include src="'views/address_oracles_list.html'"></div>
   </div>
   <div data-ng-if="address.addrStr" data-ng-controller="transactionsController" data-ng-init="load('address')">
     <h2 translate>Transactions</h2>

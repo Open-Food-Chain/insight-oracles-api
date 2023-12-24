@@ -1,0 +1,7 @@
+<div data-ng-show="pagesTotal > 1" class="pagination-bar">
+  <a data-ng-class="{disabled: pageNum === 0}" data-ng-click="setPage(0)"><i class="glyphicon glyphicon-fast-backward"></i></a>
+  <a data-ng-class="{disabled: pageNum === 0}" class="mirror-left" data-ng-click="setPage(pageNum - 1)"><i class="glyphicon glyphicon-play"></i></a>
+  <span class="pagination-bar-label"><span translate>page</span> {{pageNum === pagesTotal - 1 ? pagesTotal : pageNum + 1}} <span translate>of</span> {{pagesTotal}}</span>
+  <a data-ng-class="{disabled: pageNum === pagesTotal - 1}" data-ng-click="setPage(pageNum + 1)"><i class="glyphicon glyphicon-play"></i></a>
+  <a data-ng-class="{disabled: pageNum === pagesTotal - 1}" data-ng-click="setPage(pagesTotal - 1)"><i class="glyphicon glyphicon-fast-forward"></i></a>
+</div>

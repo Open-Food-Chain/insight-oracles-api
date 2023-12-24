@@ -26,6 +26,7 @@ angular.module('insight',[
   'insight.connection',
   'insight.currency',
   'insight.messages',
+  'insight.oracles',
 ]);
 
 angular.module('insight.system', []);
@@ -39,10 +40,11 @@ angular.module('insight.status', []);
 angular.module('insight.connection', []);
 angular.module('insight.currency', []);
 angular.module('insight.messages', []);
+angular.module('insight.oracles', []);
 
 // Source: public/src/js/controllers/address.js
 angular.module('insight.address').controller('AddressController',
-  function($scope, $rootScope, $routeParams, $location, Global, Address, getSocket) {
+  function($scope, $rootScope, $routeParams, $location, Global, Address, getSocket, AddressTxs, OraclesFirst) {
     $scope.global = Global;
 
     var socket = getSocket($scope);
@@ -85,6 +87,30 @@ angular.module('insight.address').controller('AddressController',
         $rootScope.titleDetail = address.addrStr.substring(0, 7) + '...';
         $rootScope.flashMessage = null;
         $scope.address = address;
+
+        AddressTxs.get({
+          addrStr: $routeParams.addrStr
+        }, function(addressTxs) {
+          var addressOracles = [];
+
+          OraclesFirst.get(function(firstOracleData) {
+            var oraclesList = firstOracleData.data.oracleslist;
+            var txs = addressTxs.transactions;
+            for (var i = 0; i < txs.length; i ++) {
+              if (oraclesList.indexOf(txs[i]) > -1) addressOracles.push(txs[i]);
+            }
+
+            $scope.addressOracles = addressOracles;
+
+          },
+          function(e) {
+            $scope.loading = false;
+            var err = 'Could not get first oracle information' + e.toString();
+            $scope.sysMessage = {
+              error: err
+            };
+          });
+        });
       },
       function(e) {
         if (e.status === 400) {
@@ -349,7 +375,6 @@ angular
     };
 
     $rootScope.formatUrl = function(url) {
-      console.warn(url)
       return url;
     }
 
@@ -455,6 +480,9 @@ angular
     }, {
       'title': 'Status',
       'link': 'status'
+    }, {
+      'title': 'Oracles',
+      'link': 'oracles'
     }];
 
     $scope.openScannerModal = function() {
@@ -492,7 +520,7 @@ var BLOCKS_DISPLAYED = 5;
 angular
 .module('insight.system')
 .controller('IndexController',
-  function($scope, $rootScope, $http, Global, getSocket, Blocks) {
+  function($scope, $rootScope, $http, Global, getSocket, BlocksIndex) {
     $scope.global = Global;
 
     var _getNota = function() {
@@ -510,7 +538,7 @@ angular
     };
 
     var _getBlocks = function() {
-      Blocks.get({
+      BlocksIndex.get({
         limit: BLOCKS_DISPLAYED
       }, function(res) {
         $scope.blocks = res.blocks;
@@ -1114,6 +1142,152 @@ angular
     };
   });
 
+// Source: public/src/js/controllers/oracles.js
+angular
+.module('insight.oracles')
+.controller('OraclesController',
+function($scope, $routeParams, $location, $interval, Global, OraclesFirst, $rootScope) {
+  var propsToFilter = ['n', 'r', 'pk', 'o'];
+  $scope.pageSize = window.pageSize;
+  
+  $scope.global = Global;
+  $scope.formData = { filter: '' };
+  $scope.isIndexView = true;
+  $scope.rawData = '';
+  $scope.pagesTotal = 0;
+  $scope.pageNum = 0;
+
+  $scope.initPagination = function() {
+    $scope.pagesTotal = Math.ceil($scope.oracleData.length / $scope.pageSize);
+    $scope.pageNum = 0;
+    if ($scope.pagesTotal) $scope.setPage(0);
+  }
+
+  $scope.setPage = function(num) {
+    $scope.pageNum = num;
+    $scope.paginatedData = $scope.oracleData.slice(num * $scope.pageSize, (num + 1) * $scope.pageSize);
+  }
+
+  $scope.filterData = function() {
+    var filter = $scope.formData.filter.toLowerCase();
+    var newData = [];
+    var newDataIndex = [];
+
+    for (var i = 0; i < $scope.rawData.length; i++) {
+      for (var j = 0; j < propsToFilter.length; j++) {
+        if ($scope.rawData[i][propsToFilter[j]].toLowerCase().indexOf(filter) > -1 && newDataIndex.indexOf($scope.rawData[i].o) === -1) {
+          newData.push($scope.rawData[i]);
+          newDataIndex.push($scope.rawData[i].o);
+        }
+      }
+    }
+
+    if (!filter) $scope.oracleData = $scope.rawData;
+    else $scope.oracleData = newData;
+
+    $scope.paginatedData = null;
+
+    $scope.initPagination();
+  }
+
+  OraclesFirst.get(function(firstOracleData) {
+      $scope.loading = false;
+      $scope.firstOracle = firstOracleData.data;
+      $scope.oracleData = firstOracleData.data.addressBook;
+      $scope.rawData = $scope.oracleData;
+      $scope.initPagination();
+    },
+    function(e) {
+      $scope.loading = false;
+      $scope.sysMessage = {
+        error: 'Could not get first oracle information'
+      };
+    });
+});
+
+// Source: public/src/js/controllers/oracle-data.js
+angular
+.module('insight.oracles')
+.controller('OracleDataController',
+function($scope, $routeParams, $location, $interval, Global, OracleData, OracleInfo, $rootScope) {
+  var propsToFilter = ['n', 'r', 'pk', 'o'];
+  $scope.pageSize = window.pageSize;
+  $scope.global = Global;
+  $scope.loading = {
+    info: true,
+    data: true
+  };
+  $scope.hash = $routeParams.hash;
+  $scope.formData = { filter: '' };
+  $scope.rawData = '';
+  $scope.pagesTotal = 0;
+  $scope.pageNum = 0;
+
+  $scope.initPagination = function() {
+    $scope.pagesTotal = Math.ceil($scope.oracleData.length / $scope.pageSize);
+    $scope.pageNum = 0;
+    if ($scope.pagesTotal) $scope.setPage(0);
+  }
+
+  $scope.setPage = function(num) {
+    $scope.pageNum = num;
+    $scope.paginatedData = $scope.oracleData.slice(num * $scope.pageSize, (num + 1) * $scope.pageSize);
+  }
+
+  $scope.filterData = function() {
+    var filter = $scope.formData.filter.toLowerCase();
+    var newData = [];
+    var newDataIndex = [];
+
+    for (var i = 0; i < $scope.rawData.length; i++) {
+      for (var j = 0; j < propsToFilter.length; j++) {
+        if ($scope.rawData[i][propsToFilter[j]].toLowerCase().indexOf(filter) > -1 && newDataIndex.indexOf($scope.rawData[i].o) === -1) {
+          newData.push($scope.rawData[i]);
+          newDataIndex.push($scope.rawData[i].o);
+        }
+      }
+    }
+
+    if (!filter) $scope.oracleData = $scope.rawData;
+    else $scope.oracleData = newData;
+
+    $scope.paginatedData = null;
+
+    $scope.initPagination();
+  }
+
+  OracleInfo.get({ hash: $scope.hash }, function(oracleInfo) {
+    $scope.loading.info = false;
+      $scope.oracleInfo = oracleInfo.data;
+    },
+    function(e) {
+      $scope.loading.info = false;
+      $scope.sysMessage = {
+        error: 'Could not get oracle info'
+      };
+    });
+
+  OracleData.get({ hash: $scope.hash }, function(oracleData) {
+    $scope.loading.data = false;
+    var isResArr = Array.isArray(oracleData.data);
+    var oracleDataFirstItem = isResArr ? oracleData.data[0] : oracleData.data;
+      $scope.isOracleDataJson = oracleDataFirstItem.hasOwnProperty('t') &&
+        oracleDataFirstItem.hasOwnProperty('n') &&
+        oracleDataFirstItem.hasOwnProperty('r') &&
+        oracleDataFirstItem.hasOwnProperty('pk') &&
+        oracleDataFirstItem.hasOwnProperty('o') ? false : true;
+      $scope.oracleData = $scope.isOracleDataJson ? JSON.stringify(oracleData.data, null, 2) : isResArr ? oracleData.data : [oracleData.data];
+      $scope.rawData = $scope.oracleData;
+      $scope.initPagination();
+    },
+    function(e) {
+      $scope.loading.data = false;
+      $scope.sysMessage = {
+        warn: 'Could not get oracle data'
+      };
+    });
+});
+
 // Source: public/src/js/services/address.js
 angular
 .module('insight.address')
@@ -1136,8 +1310,32 @@ angular
         }
       }
     });
+  })
+.factory('AddressTxs',
+  function($resource) {
+    return $resource(window.apiPrefix + '/addr/:addrStr');
   });
  
+// Source: public/src/js/services/oracles.js
+angular
+.module('insight.oracles')
+.factory('OraclesFirst',
+  function($resource) {
+    return $resource(window.apiPrefix + '/oracles/first');
+  })
+.factory('OracleInfo',
+  function($resource) {
+    return $resource(window.apiPrefix + '/oracles/info/:hash', {
+      hash: '@hash'
+    });
+  })
+.factory('OracleData',
+  function($resource) {
+    return $resource(window.apiPrefix + '/oracles/data/:hash', {
+      hash: '@hash'
+    });
+  })
+
 // Source: public/src/js/services/blocks.js
 angular
 .module('insight.blocks')
@@ -1164,6 +1362,10 @@ angular
 .factory('Blocks',
   function($resource) {
     return $resource(window.apiPrefix + '/blocks?limit=20');
+  })
+.factory('BlocksIndex',
+  function($resource) {
+    return $resource(window.apiPrefix + '/blocks?limit=5');
   })
 .factory('BlockByHeight',
   function($resource) {
@@ -1472,6 +1674,14 @@ angular
 .module('insight')
 .config(function($routeProvider) {
   $routeProvider.
+    when('/oracles', {
+      templateUrl: 'views/oracles.html',
+      title: 'Oracles'
+    }).
+    when('/oracles/data/:hash', {
+      templateUrl: 'views/oracles_data.html',
+      title: 'Oracles'
+    }).
     when('/block/:blockHash', {
       templateUrl: 'views/block.html',
       title: 'Block '
