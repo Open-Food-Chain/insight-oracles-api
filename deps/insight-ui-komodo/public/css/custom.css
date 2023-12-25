@@ -1,0 +1,48 @@
+/* TODO: merge into overrides.css */
+.navbar-form .form-control {
+  max-width: 250px !important;
+}
+
+.navbar .container {
+  width: 100%;
+}
+
+.no-bottom-margin {
+  margin-bottom: 0;
+}
+
+.pagination-bar {
+  padding-bottom: 15px;
+}
+.pagination-bar a {
+  font-size: 10px;
+  cursor: pointer;
+  color: #939393;
+}
+.pagination-bar a:first-child {
+  margin-right: 3px;
+}
+.pagination-bar a:last-child {
+  margin-left: 3px;
+}
+.pagination-bar a.mirror-left i {
+  transform: rotate(180deg);
+  position: relative;
+  top: 2px;
+}
+.pagination-bar a.disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.pagination-bar-label {
+  padding: 0 3px;
+}
+
+@media (max-width: 1250px) {
+  .status {
+    display: none !important;
+  }
+  .nav.navbar-nav.navbar-right {
+    float: none !important;
+  }
+}

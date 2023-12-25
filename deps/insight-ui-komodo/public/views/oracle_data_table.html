@@ -1,0 +1,49 @@
+<div data-ng-if="oracleData" class="oracle-data-block" ng-class="{'oracle-data-block-with-pagination': pagesTotal > 1}">
+  <h3 translate>
+    <span data-ng-if="isIndexView" translate>Industry Index</span>
+    <span data-ng-if="!isIndexView" translate>Data</span>
+  </h3>
+  <div class="row">
+    <div class="col-md-12">
+      <pre data-ng-if="isOracleDataJson">{{ oracleData }}</pre>
+      <div data-ng-if="!isOracleDataJson">
+        <span data-ng-if="!isOracleDataJson && rawData.length > 1">
+          <input id="filter" type="text" class="form-control" data-ng-model="formData.filter" placeholder="Filter by Name, address, oracle ID or pubkey" focus="true" ng-change="filterData()" />
+        </span>
+        <div data-ng-include src="'views/oracle_data_table_pagination.html'"></div>
+        <div class="oracles-data-table-block">
+          <table class="table oracle-data-table" style="table-layout: fixed" data-ng-repeat='i in (paginatedData || oracleData) track by $index'>
+            <tbody>
+              <tr>
+                <td><strong translate>Name</strong></td>
+                <td class="text-muted">
+                  {{i.n}}
+                </td>
+              </tr>
+              <tr>
+                <td><strong translate>Oracle</strong></td>
+                <td class="text-muted">
+                  <a href="/oracles/data/{{i.o}}" title="{{i.o}}">{{i.o}}</a>
+                </td>
+              </tr>
+              <tr>
+                <td><strong translate>Address</strong></td>
+                <td class="text-muted">
+                  <a href="/address/{{i.r}}" title="{{i.r}}">{{i.r}}</a>
+                </td>
+              </tr>
+              <tr>
+                <td><strong translate>Pubkey</strong></td>
+                <td class="text-muted">
+                  {{i.pk}}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div data-ng-if="!(paginatedData || oracleData).length && formData.filter" translate>No match</div>
+        <div data-ng-if="(paginatedData || oracleData).length === pageSize" data-ng-include src="'views/oracle_data_table_pagination.html'"></div>
+      </div>
+    </div>
+  </div>
+</div>

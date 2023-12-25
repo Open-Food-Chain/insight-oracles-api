@@ -1,0 +1,87 @@
+<div class="alert alert-danger flash-message" data-ng-show="flashMessage">
+  {{$root.flashMessage}}
+</div>
+<div data-ng-include src="'views/includes/connection.html'"></div>
+<section data-ng-controller="IndexController" data-ng-init="index()">
+  <div class="container">
+    <div id="home" class="row">
+      <div class="col-xs-12 col-md-8">
+        <div id="search-form-mobile" class="visible-xs" data-ng-include src="'views/includes/search.html'"></div>
+        <div data-ng-controller="AdRotatorController" ng-if="$root.enableAdRotator">
+          <div class="adrotator-container">
+            <strong>{{ads[adIndex].title}}</strong>
+            <div class="text">
+              {{ads[adIndex].text}} <a href="{{ads[adIndex].url}}">{{ads[adIndex].title}}</a>
+            </div>
+          </div>
+        </div>
+        <h1 translate>Latest Blocks</h1>
+        <table class="table table-hover table-striped" style="table-layout: fixed">
+          <thead>
+            <tr>
+              <th translate>Height</th>
+              <th translate>Age</th>
+              <th class="text-right"><span class="ellipsis" translate>Transactions</span></th>
+              <th class="text-right hidden-xs"><span class="ellipsis" translate>Mined by</span></th>
+              <th class="text-right hidden-xs" translate>Size</th>
+              <th class="text-right" data-ng-show="$root.notarized" translate>Notarized</th>
+            </tr>
+          </thead>
+          <tbody>
+          <tr data-ng-show="!blocks.length"><td colspan="4" translate>Waiting for blocks...</td></tr>
+          <tr class="fader" data-ng-repeat='b in blocks'>
+            <td>
+              <a href="{{$root.formatUrl('block/' + b.hash)}}">{{b.height}}</a>
+            </td>
+            <td><span class="ellipsis">{{humanSince(b.time)}}</span></td>
+            <td class="text-right">{{b.txlength}}</td>
+            <td class="text-right hidden-xs"><a href="{{b.poolInfo.url}}" title="{{b.poolInfo.poolName}}" target="_blank" data-ng-show="b.poolInfo">{{b.poolInfo.poolName}}</a></td>
+            <td class="text-right">{{b.size}}</td>
+            <td class="text-right text-success" data-ng-show="$root.notarized && b.height <= $root.notarized">Yes</td>
+            <td class="text-right" data-ng-show="$root.notarized && b.height > $root.notarized">No</td>
+          </tr>
+          </tbody>
+        </table>
+        <div class="btn-more">
+          <a href="{{$root.formatUrl('blocks')}}" class="btn btn-default" ng-if="$root.theme === 'light'" translate>See all blocks</a>
+          <a href="{{$root.formatUrl('blocks')}}" class="btn btn-primary" ng-if="$root.theme === 'dark'" translate>See all blocks</a>
+        </div>
+
+        <h2 translate>Latest Transactions</h2>
+
+        <table class="table table-hover table-striped" style="table-layout: fixed;">
+          <thead>
+            <tr>
+              <th>Hash</th>
+              <th class="text-right" translate>Value Out</th>
+            </tr>
+          </thead>
+          <tbody>
+          <tr data-ng-show="!txs.length"><td colspan="3" translate>Waiting for transactions...</td></tr>
+          <tr class="fader" data-ng-repeat='tx in txs'>
+            <td>
+              <a class="ellipsis" href="{{$root.formatUrl('tx/' + tx.txid)}}">{{tx.txid}}</a>
+            </td>
+            <td class="text-right"><span class="ellipsis">{{$root.currency.getConvertion(tx.valueOut)}}</span></td>
+          </tr>
+          </tbody>
+        </table>
+
+      </div>
+
+      <div class="col-xs-12 col-md-4 col-gray about-kmd-block">
+        <h2 translate>Unstoppable transparency from farm to fork</h2>
+        <p id="intro">Open Food Chain is an industry-owned public infrastructure that makes your compliance process more efficient. Every participant can publish ESG claims related to batches immediately and automatically. No more emailing or phone calls chasing certificates.</p>
+        
+        <p data-ng-if='currency.testnet'><strong>This explorer is currently showing the live OFC network!</strong></p>
+        <a class="twitter-timeline" href="https://twitter.com/openfoodchain">Tweets by Open Food Chain</a></p>
+        <div id="powered" class="row">
+          <div class="powered-text">
+            <small class="text-muted" translate>Powered by</small>
+          </div>
+          <a href="https://openfoodchain.com" target="_blank" class="ofc" title="Open Food Chain"><img src="https://openfoodchain.com/wp-content/uploads/2023/04/OFC-LOGOS-11.04.2023-FINAL-02.svg" alt="OFC logo" /></a>
+        </div>
+      </div> <!-- END OF COL-3 -->
+    </div>
+  </div>
+</section>
