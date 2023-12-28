@@ -1,6 +1,16 @@
 # syntax=docker/dockerfile:1
 
-# note: this docker file assumes you already have OFC explorer installed locally
+# note: this docker file assumes you already have komodod instance running outside of this container
+# make sure to change line 55 to your remote komodod api address
+# alternatively use the following set of commands to download pre-built binaries and create OCCS daemon startup script
+
+# RUN wget https://raw.githubusercontent.com/KomodoPlatform/komodo/master/zcutil/fetch-params.sh
+# RUN chmod +x fetch-params.sh
+# RUN ./fetch-params.sh
+# RUN wget https://github.com/KomodoPlatform/komodo/releases/download/v0.8.1/komodo_0.8.1_linux.zip
+# RUN unzip komodo_0.8.1_linux.zip
+# RUN echo 'nohup ./komodod -ac_name=OCCS -pubkey=038afbc819aecfb3d65acdf270f755c9279d69d4a27293f10889264b8bd6c1fae2 -ac_pubkey=038afbc819aecfb3d65acdf270f755c9279d69d4a27293f10889264b8bd6c1fae2 -ac_founders=1000 -ac_founders_reward=5000000000000 -ac_cc=2 -ac_adaptivepow=1 -ac_staked=95 -ac_reward=25000 -ac_supply=500000000 -addnode=162.55.144.64 -addnode=162.55.144.56 &' >> start-occs-daemon.sh
+# RUN chmod +x start-occs-daemon.sh
 
 # set the base image to Debian
 # https://hub.docker.com/_/debian/

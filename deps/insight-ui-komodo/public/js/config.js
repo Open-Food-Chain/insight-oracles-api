@@ -1,6 +1,6 @@
 var config = {
   symbol: 'OCCS',
-  url: 'http://51.195.90.238:3001',
+  url: 'http://localhost:3001',
   apiPrefix: '/insight-api-komodo',
   notarized: false,
   pageSize: 3, // oracles address book page size

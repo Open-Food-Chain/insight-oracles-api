@@ -104,6 +104,9 @@ Make sure to check if zmq port is available on your machine.
 
 Komodod instance can be remote so it makes possible to run explorer and daemon as separate containers.
 
+### Note about full node daemon
+komodod configuration and start up is not part of this guide. You can grab latest binaries from this url https://github.com/KomodoPlatform/komodo/releases
+
 ## License
 
 Code released under [the MIT license](https://github.com/bitpay/bitcore-node/blob/master/LICENSE).
