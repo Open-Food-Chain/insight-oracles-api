@@ -55,7 +55,7 @@ RUN npm -v
 
 WORKDIR .
 
-RUN git clone https://github.com/pbca26/insight-oracles-api
+RUN git clone https://github.com/Open-Food-Chain/insight-oracles-api
 WORKDIR insight-oracles-api
 
 RUN npm install git+https://git@github.com/pbca26/bitcore-node-komodo
