@@ -7,7 +7,7 @@ var EventEmitter = require('events').EventEmitter;
 
 describe('#callMethod', function() {
 
-  var expectedUrl = 'http://localhost:3001';
+  var expectedUrl = window.location.origin;
   var expectedOptions = {
     reconnection: false,
     connect_timeout: 5000

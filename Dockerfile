@@ -60,60 +60,11 @@ WORKDIR insight-oracles-api
 
 RUN npm install git+https://git@github.com/pbca26/bitcore-node-komodo
 
-ARG COIN="OCCS"
-ARG rpchost="127.0.0.1"
-ARG rpcport="58472"
-ARG rpcuser="user246246276"
-ARG rpcpassword="passd6bb94637f105a0299e62089201b4087d3934f50366ad4834ef247e780d53417d8"
-ARG zmqport=11000
-ARG webport=3001
+RUN ./node_modules/bitcore-node-komodo/bin/bitcore-node create oracle-explorer
+RUN cd oracle-explorer && .././node_modules/bitcore-node-komodo/bin/bitcore-node install git+https://git@github.com/pbca26/insight-api-komodo git+https://git@github.com/pbca26/insight-ui-komodo
 
-RUN ./node_modules/bitcore-node-komodo/bin/bitcore-node create ${COIN}-explorer
-RUN cd ${COIN}-explorer && .././node_modules/bitcore-node-komodo/bin/bitcore-node install git+https://git@github.com/pbca26/insight-api-komodo git+https://git@github.com/pbca26/insight-ui-komodo
-RUN nl=$'\n' && echo "\
-{$nl\
-  \"network\": \"mainnet\",$nl\
-  \"port\": $webport,$nl\
-  \"services\": [$nl\
-    \"bitcoind\",$nl\
-    \"insight-api-komodo\",$nl\
-    \"insight-ui-komodo\",$nl\
-    \"web\"$nl\
-  ],$nl\
-  \"oracles\": {$nl\
-    \"passphroughMethods\": false,$nl\
-    \"updateInterval\": 300$nl\
-  },$nl\
-  \"servicesConfig\": {$nl\
-    \"bitcoind\": {$nl\
-      \"connect\": [$nl\
-        {$nl\
-          \"rpchost\": \"$rpchost\",$nl\
-          \"rpcport\": $rpcport,$nl\
-          \"rpcuser\": \"$rpcuser\",$nl\
-          \"rpcpassword\": \"$rpcpassword\",$nl\
-          \"zmqpubrawtx\": \"tcp://${rpchost}:${zmqport}\"$nl\
-        }$nl\
-      ]$nl\
-    },$nl\
-    \"insight-api-komodo\": {$nl\
-      \"rateLimiterOptions\": {$nl\
-        \"whitelist\": [\"::ffff:127.0.0.1\",\"127.0.0.1\"],$nl\
-        \"whitelistLimit\": 500000,$nl\
-        \"whitelistInterval\": 3600000$nl\
-      }$nl\
-    }$nl\
-  }$nl\
-}$nl\
-" > ${COIN}-explorer/bitcore-node.json
-
-RUN cp deps/bitcore-node-komodo/lib/services/bitcoind.js ${COIN}-explorer/node_modules/bitcore-node-komodo/lib/services
-RUN cp deps/bitcoind-rpc/lib/index.js ${COIN}-explorer/node_modules/bitcoind-rpc/lib
-RUN cp deps/insight-api-komodo/lib/index.js ${COIN}-explorer/node_modules/insight-api-komodo/lib
-RUN cp deps/insight-api-komodo/lib/oracles.js ${COIN}-explorer/node_modules/insight-api-komodo/lib
-RUN cp -r deps/insight-ui-komodo ${COIN}-explorer/node_modules/
-
-# start explorer
-WORKDIR OCCS-explorer
-CMD ["./node_modules/bitcore-node-komodo/bin/bitcore-node", "start"]
-EXPOSE 3001
+RUN cp deps/bitcore-node-komodo/lib/services/bitcoind.js oracle-explorer/node_modules/bitcore-node-komodo/lib/services
+RUN cp deps/bitcoind-rpc/lib/index.js oracle-explorer/node_modules/bitcoind-rpc/lib
+RUN cp deps/insight-api-komodo/lib/index.js oracle-explorer/node_modules/insight-api-komodo/lib
+RUN cp deps/insight-api-komodo/lib/oracles.js oracle-explorer/node_modules/insight-api-komodo/lib
+RUN cp -r deps/insight-ui-komodo oracle-explorer/node_modules/

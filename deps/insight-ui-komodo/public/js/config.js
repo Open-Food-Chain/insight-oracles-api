@@ -1,6 +1,6 @@
 var config = {
-  symbol: 'OCCS',
-  url: 'http://localhost:3001',
+  symbol: 'OFC',
+  url: window.location.origin,
   apiPrefix: '/insight-api-komodo',
   notarized: false,
   pageSize: 3, // oracles address book page size
