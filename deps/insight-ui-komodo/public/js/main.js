@@ -959,7 +959,8 @@ angular
 
         // non standard output
         if (items[i].scriptPubKey && !items[i].scriptPubKey.addresses) {
-          items[i].scriptPubKey.addresses = ['Unparsed address [' + u++ + ']'];
+          //TODO: AUTO parse it into characters?
+          items[i].scriptPubKey.addresses = [ items[i].scriptPubKey.asm ];
           items[i].notAddr = true;
           notAddr = true;
         }

@@ -1,0 +1,12 @@
+{
+  "description": "A full Komodo node build with Bitcore",
+  "repository": "https://github.com/user/project",
+  "license": "MIT",
+  "readme": "README.md",
+  "dependencies": {
+    "bitcore-lib-komodo": "git+https://git@github.com/DeckerSU/bitcore-lib-komodo",
+    "bitcore-node-komodo": "git+https://git@github.com/DeckerSU/bitcore-node-komodo",
+    "insight-api-komodo": "git+https://git@github.com/pbca26/insight-api-komodo.git",
+    "insight-ui-komodo": "git+https://git@github.com/pbca26/insight-ui-komodo.git"
+  }
+}

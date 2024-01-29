@@ -1,0 +1,57 @@
+<div data-ng-include src="'views/includes/connection.html'"></div>
+<section data-ng-controller="OracleDataController" data-ng-init="init()">
+  <div class="alert alert-danger flash-message" data-ng-show="sysMessage && sysMessage.error">{{sysMessage.error}}</div>
+  <div class="alert alert-warning flash-message" data-ng-show="sysMessage && sysMessage.warn">{{sysMessage.warn}}</div>
+  <section>
+  <h1 translate>Oracle</h1>
+  <div class="well well-sm ellipsis" data-ng-if="hash">
+    <strong>ID</strong> 
+    <span class="txid text-muted">{{hash}}</span>
+    <span class="btn-copy" clip-copy="block.hash"></span>
+  </div>
+  <div class="text-muted" data-ng-if="!oracleData && (loading.info || loading.data)">
+    <span translate>Loading Oracle Info</span>  <span class="loader-gif"></span>
+  </div>
+  <div data-ng-if="oracleInfo">
+    <h3 translate>Info</h3>
+    <div class="row">
+      <div class="col-md-12">
+        <table class="table" style="table-layout: fixed">
+          <tbody>
+            <tr>
+              <td><strong translate>Description</strong></td>
+              <td class="text-right text-muted">
+                {{oracleInfo.description}}
+              </td>
+            </tr>
+            <tr>
+              <td><strong translate>Name</strong></td>
+              <td class="text-right text-muted">
+                {{oracleInfo.name}}
+              </td>
+            </tr>
+            <tr>
+              <td><strong translate>Format</strong></td>
+              <td class="text-right text-muted">
+                {{oracleInfo.format}}
+              </td>
+            </tr>
+            <tr>
+              <td><strong translate>Marker</strong></td>
+              <td class="text-right text-muted">
+                {{oracleInfo.marker}}
+              </td>
+            </tr>
+            <tr>
+              <td><strong translate>Transaction ID</strong></td>
+              <td class="text-right text-muted">
+                <a href="/tx/{{oracleInfo.txid}}" title="{{oracleInfo.txid}}">{{oracleInfo.txid}}</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div data-ng-include src="'views/oracle_data_table.html'"></div>
+</section>
