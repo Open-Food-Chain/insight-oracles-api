@@ -1,0 +1,36 @@
+{
+  "network": "mainnet",
+  "port": ${WEB_PORT},
+  "services": [
+    "bitcoind",
+    "insight-api-komodo",
+    "insight-ui-komodo",
+    "web"
+  ],
+  "oracles": {
+    "passphroughMethods": false,
+    "updateInterval": 300
+  },
+  "servicesConfig": {
+    "bitcoind": {
+      "connect": [
+        {
+          "rpchost": "${LOCAL_KOMODO_SVC_SERVICE_HOST}",
+          "rpcport": ${LOCAL_KOMODO_SVC_SERVICE_PORT_RPC},
+          "rpcuser": "${RPC_USER}",
+          "rpcpassword": "${RPC_PASSWORD}",
+          "zmqpubrawtx": "tcp://${LOCAL_KOMODO_SVC_SERVICE_HOST}:${LOCAL_KOMODO_SVC_SERVICE_PORT_ZMQ}"
+        }
+      ]
+    },
+    "insight-api-komodo": {
+      "rateLimiterOptions": {
+        "whitelist": [
+          "0.0.0.0/4"
+        ],
+        "whitelistLimit": 500000,
+        "whitelistInterval": 3600000
+      }
+    }
+  }
+}
