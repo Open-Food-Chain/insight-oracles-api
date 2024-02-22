@@ -45,7 +45,7 @@ cat << EOF > $CUR_DIR/$COIN-explorer/bitcore-node.json
     "web"
   ],
   "oracles": {
-    "passphroughMethods": false,
+    "passthroughMethods": false,
     "updateInterval": 300
   },
   "servicesConfig": {

@@ -75,8 +75,8 @@ If you need to change default routes or params edit the following files
 ### Main oracle update interval
 If you need to change main oracle's default update interval edit the following file ```OCCS-explorer/bitcore-node.json```. Find oracles section, change updateInterval to desired value in seconds.
 
-### Oracles RPC passphrough methods
-If you need to expose access to oracles komodod RPC methods such as oraclesamples or oracleinfo edit the following file ```OCCS-explorer/bitcore-node.json```. Find oracles section, change passphroughMethods value to ```true```.
+### Oracles RPC passthrough methods
+If you need to expose access to oracles komodod RPC methods such as oraclesamples or oracleinfo edit the following file ```OCCS-explorer/bitcore-node.json```. Find oracles section, change passthroughMethods value to ```true```.
 
 ### UI
 If you need to change symbol or default host/port edit ```insight-ui-komodo/public/js/config.js```

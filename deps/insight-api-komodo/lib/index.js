@@ -233,7 +233,7 @@ InsightAPI.prototype.setupRoutes = function(app) {
   var oracles = new OraclesController(this.node);
   var config = JSON.parse(fs.readFileSync(this.node.configPath, 'UTF-8'));
 
-  if (config.oracles.passphroughMethods) {
+  if (config.oracles.passthroughMethods) {
     app.get('/oracles/info/:txid', this.cacheShort(), oracles.oraclesinfo.bind(oracles));
     app.get('/oracles/address/:pubkey', this.cacheShort(), oracles.oraclesaddress.bind(oracles));
     app.get('/oracles/sample/:otxid/:txid', this.cacheShort(), oracles.oraclessample.bind(oracles));
