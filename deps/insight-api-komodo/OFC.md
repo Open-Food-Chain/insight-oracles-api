@@ -121,7 +121,7 @@ GET response:
 }
 ```
 
-## Passphrough API methods
+## Passthrough API methods
 
 ### oracleinfo
 
